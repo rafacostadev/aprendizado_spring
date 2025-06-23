@@ -31,8 +31,24 @@ public class ProductService {
 	public Page<ProductDTO> findAll(Pageable pageable) {
 		return productRepository.findAll(pageable).map(x -> modelMapper.map(x, ProductDTO.class));
 	}
-
+	
+	@Transactional
 	public ProductDTO insert(ProductDTO dto) {
 		return modelMapper.map(productRepository.save(modelMapper.map(dto, Product.class)), ProductDTO.class);
+	}
+	
+	@Transactional
+	public ProductDTO update(Long id, ProductDTO dto) {
+		ProductDTO entity = modelMapper.map(productRepository.getReferenceById(id), ProductDTO.class);
+		entity.setDescription(dto.getDescription());
+		entity.setImgUrl(dto.getImgUrl());
+		entity.setName(dto.getName());
+		entity.setPrice(dto.getPrice());
+		return modelMapper.map(productRepository.save(modelMapper.map(entity, Product.class)), ProductDTO.class);
+	}
+	
+	@Transactional
+	public void delete(Long id) {
+		productRepository.deleteById(id);
 	}
 }
